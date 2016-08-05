@@ -1,5 +1,7 @@
 import range from 'lodash.range'
 import rand from 'lodash.random'
+import BitArray from 'node-bitarray'
+import zipObject from 'zip-object'
 
 class Panel {
   constructor ($canvas) {
@@ -7,10 +9,32 @@ class Panel {
     this.canvas = canvas[0]
     this.ctx = canvas.getContext('2d')
     this.rowWidth = this.$canvas.width()
+    this.canvasHeight = this.$canvas.height()
     this.currentRow = this.generateFreshRow()
     this.pixel = this.ctx.createImageData(1,1)
     this.pixelData = this.pixel.data
     this.currentY = 0
+    this.ruleMap = this.generateRuleMap()
+    this.interval = null
+  }
+
+  startAnimation () {
+    this.interval = setInterval(() => {
+      this.printRow(this.currentRow)
+
+      this.currentRow = this.currentRow.map((cell, i, arr) => {
+        let leftIndex = i - 1 < 0 ? this.rowWidth - 1 : i - 1
+        let rightIndex = i + 1 > this.rowWidth - 1 ? 0 : i + 1
+        let threeBitStr = [arr[leftIndex], cell, arr[rightIndex]].join('')
+        return this.ruleMap[threeBitStr]
+      })
+
+      if (this.currentY++ > this.canvasHeight) {
+        this.currentY = 0
+        this.ruleMap = this.generateRuleMap(rand(256))
+        this.currentRow = this.generateFreshRow(this.rowWidth)
+      }
+    }, 20)
   }
 
   generateFreshRow () {
@@ -19,6 +43,12 @@ class Panel {
     })
     row[parseInt(row.length / 2)] = 1
     return row
+  }
+
+  generateRuleMap () {
+    var bitArray = BitArray.parse(rand(256), true)
+    var threeBitPermutations = ['111','110','101','100','011','010','001','000']
+    return zipObject(threeBitPermutations, bitArray)
   }
 
   printRow () {
