@@ -9,8 +9,10 @@ const colors = [
   {r: 54, g: 177, b: 191}
 ]
 
-$('canvas').each((i, el) => {
-  let $canvas = $(el)
-  let panel = new Panel($canvas, colors[i])
+$('.canvas-container').each((i, container) => {
+  let $container = $(container)
+  let $canvas = $container.find('canvas')
+  let $bitContainer = $container.find('.bit-container')
+  let panel = new Panel($canvas, $bitContainer, colors[i])
   panel.startAnimation()
 })

@@ -5,10 +5,13 @@ import zipObject from 'zip-object'
 import loop from 'raf-loop'
 
 class Panel {
-  constructor ($canvas, rgb) {
+  constructor ($canvas, $bitContainer, rgb) {
     this.$canvas = $canvas
     this.canvas = $canvas[0]
     this.ctx = this.canvas.getContext('2d')
+    this.$bitContainer = $bitContainer
+    this.bitArray = null
+    this.rgb = rgb
     this.rowWidth = this.$canvas.width()
     this.canvasHeight = this.$canvas.height()
     this.currentRow = this.generateFreshRow()
@@ -17,12 +20,12 @@ class Panel {
     this.currentY = 0
     this.ruleMap = this.generateRuleMap()
     this.engine = null
-    this.rgb = rgb
   }
 
   startAnimation () {
     this.engine = loop((dt) => {
       this.printRow(this.currentRow)
+      this.updateBitContainer()
 
       this.currentRow = this.currentRow.map((cell, i, arr) => {
         let leftIndex = i - 1 < 0 ? this.rowWidth - 1 : i - 1
@@ -48,9 +51,9 @@ class Panel {
   }
 
   generateRuleMap () {
-    var bitArray = BitArray.parse(rand(256), true)
+    this.bitArray = BitArray.parse(rand(256), true)
     var threeBitPermutations = ['111','110','101','100','011','010','001','000']
-    return zipObject(threeBitPermutations, bitArray)
+    return zipObject(threeBitPermutations, this.bitArray)
   }
 
   printRow () {
@@ -64,6 +67,10 @@ class Panel {
     let rgb = cell === 1 ? this.rgb : {r: 0, g: 0, b: 0}
     this.ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`
     this.ctx.fillRect(x, y, 1, 1)
+  }
+
+  updateBitContainer () {
+    this.$bitContainer.text(this.bitArray.join(''))
   }
 }
 
