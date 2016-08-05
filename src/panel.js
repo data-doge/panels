@@ -5,7 +5,7 @@ import zipObject from 'zip-object'
 import loop from 'raf-loop'
 
 class Panel {
-  constructor ($canvas) {
+  constructor ($canvas, rgb) {
     this.$canvas = $canvas
     this.canvas = $canvas[0]
     this.ctx = this.canvas.getContext('2d')
@@ -17,6 +17,7 @@ class Panel {
     this.currentY = 0
     this.ruleMap = this.generateRuleMap()
     this.engine = null
+    this.rgb = rgb
   }
 
   startAnimation () {
@@ -60,7 +61,7 @@ class Panel {
   }
 
   drawPixel (x, y, cell) {
-    let rgb = cell === 1 ? {r: 255, g: 255, b: 255} : {r: 0, g: 0, b: 0}
+    let rgb = cell === 1 ? this.rgb : {r: 0, g: 0, b: 0}
     this.ctx.fillStyle = `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 1)`
     this.ctx.fillRect(x, y, 1, 1)
   }
