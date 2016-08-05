@@ -1,0 +1,33 @@
+{
+  "name": "panels",
+  "version": "1.0.0",
+  "description": "multi-panel 1-d cellular automaton",
+  "main": "index.js",
+  "scripts": {
+    "start": "budo . -d --serve bundle.js --live",
+    "build": "browserify . -o bundle.js -g uglifyify",
+    "dist": "mkdir -p dist && bash -c 'cp *.{js,html,css} dist'",
+    "push": "gh-pages -d dist",
+    "deploy": "npm run build && npm run dist && npm run push"
+  },
+  "browserify": {
+    "transform": []
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/data-doge/panels"
+  },
+  "author": "data-doge",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/data-doge/panels/issues"
+  },
+  "homepage": "https://github.com/data-doge/panels",
+  "dependencies": {},
+  "devDependencies": {
+    "browserify": "^10.0.0",
+    "budo": "^4.0.0",
+    "gh-pages": "^0.3.0",
+    "uglifyify": "^3.0.1"
+  }
+}
