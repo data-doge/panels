@@ -2,12 +2,13 @@ import range from 'lodash.range'
 import rand from 'lodash.random'
 import BitArray from 'node-bitarray'
 import zipObject from 'zip-object'
+import loop from 'raf-loop'
 
 class Panel {
   constructor ($canvas) {
     this.$canvas = $canvas
-    this.canvas = canvas[0]
-    this.ctx = canvas.getContext('2d')
+    this.canvas = $canvas[0]
+    this.ctx = this.canvas.getContext('2d')
     this.rowWidth = this.$canvas.width()
     this.canvasHeight = this.$canvas.height()
     this.currentRow = this.generateFreshRow()
@@ -15,11 +16,11 @@ class Panel {
     this.pixelData = this.pixel.data
     this.currentY = 0
     this.ruleMap = this.generateRuleMap()
-    this.interval = null
+    this.engine = null
   }
 
   startAnimation () {
-    this.interval = setInterval(() => {
+    this.engine = loop((dt) => {
       this.printRow(this.currentRow)
 
       this.currentRow = this.currentRow.map((cell, i, arr) => {
@@ -34,7 +35,7 @@ class Panel {
         this.ruleMap = this.generateRuleMap(rand(256))
         this.currentRow = this.generateFreshRow(this.rowWidth)
       }
-    }, 20)
+    }).start()
   }
 
   generateFreshRow () {
